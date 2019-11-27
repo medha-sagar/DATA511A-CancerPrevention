@@ -1,7 +1,7 @@
 library(plotly)
 library(shiny)
 library(shinydashboard)
-
+library(MetaboAnalystR)
 file_name <- "metaboanalyst_data-2.csv"
 gender <- "both"
 bmi <- "both"
