@@ -12,7 +12,7 @@ file_name <- "metaboanalyst_data.csv"
 gender <- "both"
 bmi <- "both"
 
-create_PCA <- function(gender, bmi) {
+create_PLSDA <- function(gender, bmi) {
   if (gender == "female"){
     if (bmi == "normal"){
       file_name = "female_normal_data.csv"
