@@ -95,8 +95,8 @@ ui <- fluidPage(
   plotlyOutput("plot"),
   checkboxGroupInput("gender", "Choose Gender:", c("female", "male")
   ),
-  checkboxGroupInput("bmi", "Choose BMI:", c("normal", "overweight")
-  )
+  checkboxGroupInput("bmi", "Choose BMI:", c("normal", "overweight")),
+  imageOutput("image")
 )
 server <- function(input, output) {
   output$plot <- renderPlotly({
@@ -114,5 +114,14 @@ server <- function(input, output) {
     }
   })
   
+  output$image <- renderImage({
+    # When input$n is 3, filename is ./images/image3.jpeg
+    filename <- "pls_imp_0_dpi72.png"
+    
+    # Return a list containing the filename and alt text
+    list(src = filename,
+         contentType = "image/png")
+    
+  }, deleteFile = FALSE)
 }
 shinyApp(ui, server)
