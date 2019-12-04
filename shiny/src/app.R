@@ -132,22 +132,17 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   delta <- reactive({
-    data <- read.csv("./data/delta.csv", header = TRUE)
-    data
+    delta_dataset <- paste("./data/delta_", input$gender, "_", input$bmi, ".csv", sep = "")
+    data <- read.csv(delta_dataset, header = TRUE)
+    data[,]
   })
   
-  deltaSquared <- reactive({
-    data <- read.csv("./data/delta.csv", header = TRUE)
-    data$DeltaSquared
-  })
-  
-  protein <- reactive({
-    data <- read.csv("./data/delta.csv", header = TRUE)
-    data[data$DeltaSquared > quantile(deltaSquared(), input$deltaPercentile / 100),]
+  significantProteins <- reactive({
+    delta()[delta()$DeltaSquared > quantile(delta()$DeltaSquared, input$deltaPercentile / 100),]
   })
   
   n_plots <- reactive({
-    n <- nrow(protein())
+    n <- nrow(significantProteins())
     n2 <- n %/% 10
     if (n %% 10 > 0) {
       n2 <- n2 + 1
@@ -156,15 +151,15 @@ server <- function(input, output, session) {
   })
   
   output$deltaHistogram <- renderPlot({
-    hist(deltaSquared(),
+    hist(delta()$DeltaSquared,
          col = 'gray',
          border = 'white',
-         ylim = c(0, 1000),
+         ylim = c(0, 2000),
          labels = TRUE,
          xlab = "Squared Difference in Plasma Protein Concentration",
-         breaks = seq(0, 1, by = 0.02),
+         breaks = seq(0, 3.3, by = 0.05),
          main="Histogram of change in Plasma Protein Concentrations after taking Aspirin vs Placebo")
-    abline(v = quantile(deltaSquared(), input$deltaPercentile / 100), col = "red", lwd = 2)
+    abline(v = quantile(delta()$DeltaSquared, input$deltaPercentile / 100), col = "red", lwd = 2)
   })
   
   output$proteinPlots <- renderUI({
@@ -185,14 +180,19 @@ server <- function(input, output, session) {
           end <- my_i * 10
           start <- end - 9
           if (my_i == n_plots()) {
-            n <- nrow(protein())
+            n <- nrow(significantProteins())
             prev <- end - 10
             end <- n %% 10 + prev
           }
-          df <- protein()[order(protein()$DeltaSquared, decreasing = TRUE),]
+          df <- delta()[order(delta()$DeltaSquared, decreasing = TRUE),]
           df <- df[start:end,]
           par(mai=c(1,5,1,1))
-          barplot(df$Delta,names.arg = df$Protein, xlim = c(-0.2, 0.2), horiz=TRUE,las=1)
+          barplot(
+            df[order(df$DeltaSquared, decreasing = FALSE),]$Delta,
+            names.arg = df[order(df$DeltaSquared, decreasing = FALSE),]$Protein,
+            xlim = c(-0.5, 0.5),
+            horiz=TRUE,
+            las=1)
         })
       })
     }
