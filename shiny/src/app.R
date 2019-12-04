@@ -91,7 +91,7 @@ ui <- fluidPage(
           label = "Percentile",
           min = 1, max = 99, value = 95),
         plotOutput("deltaHistogram"),
-        h2("List of Proteins with change above N-th percentile"),
+        uiOutput("plotsTitle"),
         uiOutput("proteinPlots"),
         verbatimTextOutput("ph")),
       
@@ -160,6 +160,10 @@ server <- function(input, output, session) {
          breaks = seq(0, 3.3, by = 0.05),
          main="Histogram of change in Plasma Protein Concentrations after taking Aspirin vs Placebo")
     abline(v = quantile(delta()$DeltaSquared, input$deltaPercentile / 100), col = "red", lwd = 2)
+  })
+  
+  output$plotsTitle <- renderUI({
+    h2(paste("List of Proteins with change above ", input$deltaPercentile, "-th percentile", sep = ""))
   })
   
   output$proteinPlots <- renderUI({
