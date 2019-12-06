@@ -12,6 +12,7 @@ create_PCA <- function(gender, bmi) {
   rownames(df_x) <- 1:nrow(df_x)
   df_var <- read.csv(var_dataset)
   df_cls <- read.csv(cls_dataset)
+  df_cls$x <- as.factor(df_cls$x)
   
   columns = c("AGE", "GENDER", "BMI", "Sample")
   df_demographics <- df_demographics[columns]
@@ -21,7 +22,8 @@ create_PCA <- function(gender, bmi) {
   merged_data$Info <- paste("AGE : ", merged_data$AGE, " GENDER : ", merged_data$GENDER, " BMI : ", merged_data$BMI)
   col <- c("#1972A4", "#FF7070")
   
-  
+  levels(df_cls$x)[levels(df_cls$x)==0] <- "Cluster1"
+  levels(df_cls$x)[levels(df_cls$x)==1] <- "Cluster2"
   xlabel = paste("PC",1, "(", round(100*df_var$x[1],1), "%)");
   ylabel = paste("PC",2, "(", round(100*df_var$x[2],1), "%)");
   zlabel = paste("PC",3, "(", round(100*df_var$x[3],1), "%)");
@@ -46,6 +48,7 @@ create_PLSDA <- function(gender, bmi) {
   df_x <- read.csv(x_dataset)
   df_var <- read.csv(var_dataset)
   df_cls <- read.csv(cls_dataset)
+  df_cls$x <- as.factor(df_cls$x)
   
   columns = c("AGE", "GENDER", "BMI", "Sample")
   df_demographics <- df_demographics[columns]
@@ -54,6 +57,8 @@ create_PLSDA <- function(gender, bmi) {
   df_x$Info <- paste("AGE : ", df_x$AGE, " GENDER : ", df_x$GENDER, " BMI : ", df_x$BMI)
   
   # Label and plot graph
+  levels(df_cls$x)[levels(df_cls$x)==0] <- "Placebo"
+  levels(df_cls$x)[levels(df_cls$x)==1] <- "Aspirin"
   xlabel <- paste("Component", 1, "(", round(100*df_var$x[1]/df_var$x[9],1), "%)");
   ylabel <- paste("Component", 2, "(", round(100*df_var$x[2]/df_var$x[9],1), "%)");
   zlabel <- paste("Component", 3, "(", round(100*df_var$x[3]/df_var$x[9],1), "%)");
@@ -73,7 +78,7 @@ ui <- fluidPage(
       selectInput("bmi", "BMI", c("both", "normal", "overweight"))
     ),
     fluidRow(
-      h4("Effect of Arspirin on Plasma Proteins in a Colorectal Cancer Prevention Study"),
+      h4("Effect of Aspirin on Plasma Proteins in a Colorectal Cancer Prevention Study"),
       HTML("<ul>
            <li>Long term use of aspirin is associated with lower risk of colorectal cancer but mechanism is not known</li>
            <li>This cross-over randomized study of 44 individuals investigates how aspirin may change biological response , specifically plasma proteins after taking aspirin</li>
