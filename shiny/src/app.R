@@ -14,22 +14,22 @@ create_PCA <- function(gender, bmi) {
   df_cls <- read.csv(cls_dataset)
   df_cls$x <- as.factor(df_cls$x)
   
-  columns = c("AGE", "GENDER", "BMI", "Sample")
+  columns = c("AGE", "GENDER", "BMI", "Sample", "TREATMENT")
   df_demographics <- df_demographics[columns]
   merged_data <- merge(df_x, df_demographics, how="inner", on = "Sample")
   rownames(merged_data) <- merged_data$Sample
   merged_data$Sample <- NULL
   merged_data$Info <- paste("AGE : ", merged_data$AGE, " GENDER : ", merged_data$GENDER, " BMI : ", merged_data$BMI)
-  col <- c("#1972A4", "#FF7070")
+  col <- c("#4A274F", "#CCF381")
   
-  levels(df_cls$x)[levels(df_cls$x)==0] <- "Cluster1"
-  levels(df_cls$x)[levels(df_cls$x)==1] <- "Cluster2"
+  levels(merged_data$TREATMENT)[levels(merged_data$TREATMENT)=='B'] <- "Placebo"
+  levels(merged_data$TREATMENT)[levels(merged_data$TREATMENT)=='A'] <- "Aspirin"
   xlabel = paste("PC",1, "(", round(100*df_var$x[1],1), "%)");
   ylabel = paste("PC",2, "(", round(100*df_var$x[2],1), "%)");
   zlabel = paste("PC",3, "(", round(100*df_var$x[3],1), "%)");
   
   p <- plotly::plot_ly(x = merged_data$PC1, y = merged_data$PC2, z = merged_data$PC3, text = merged_data$Info,
-                       color = df_cls$x, colors = col,hovertemplate = paste('X: %{x:.2f}\nY: %{y:.2f}\nZ: %{z:.2f}\nInfo: %{text}'))
+                       color = merged_data$TREATMENT, colors = col,hovertemplate = paste('X: %{x:.2f}\nY: %{y:.2f}\nZ: %{z:.2f}\nInfo: %{text}'))
   
   p <- plotly::add_markers(p, sizes = 5)
   p <- plotly::layout(p, scene = list(xaxis = list(title = xlabel),
