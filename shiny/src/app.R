@@ -29,7 +29,7 @@ create_PCA <- function(gender, bmi) {
   zlabel = paste("PC",3, "(", round(100*df_var$x[3],1), "%)");
   
   p <- plotly::plot_ly(x = merged_data$PC1, y = merged_data$PC2, z = merged_data$PC3, text = merged_data$Info,
-                       color = merged_data$TREATMENT, colors = col,hovertemplate = paste('X: %{x:.2f}\nY: %{y:.2f}\nZ: %{z:.2f}\nInfo: %{text}'))
+                       color = merged_data$TREATMENT, colors = col,hovertemplate = paste('C1 Score: %{x:.2f}\nC2 Score: %{y:.2f}\nC3 Score: %{z:.2f}\n%{text}'))
   
   p <- plotly::add_markers(p, sizes = 5)
   p <- plotly::layout(p, scene = list(xaxis = list(title = xlabel),
@@ -78,11 +78,11 @@ ui <- fluidPage(
       selectInput("bmi", "BMI", c("both", "normal", "overweight"))
     ),
     fluidRow(
-      h4("Effect of Aspirin on Plasma Proteins in a Colorectal Cancer Prevention Study"),
+      h4("Effect of Aspirin on Plasma Protein Concentration in a Colorectal Cancer Prevention Study"),
       HTML("<ul>
-           <li>Long term use of aspirin is associated with lower risk of colorectal cancer but mechanism is not known</li>
-           <li>This cross-over randomized study of 44 individuals investigates how aspirin may change biological response , specifically plasma proteins after taking aspirin</li>
-           <li>Participants were randomized to regular dose of aspirin (325 mg/day) and placebo, each for 60 days</li>
+           <li>Long term use of aspirin is associated with lower risk of colorectal cancer but the mechanism is not known</li>
+           <li>This cross-over randomized study of 44 individuals investigates how aspirin may change biological response, specifically plasma protein concentration after taking aspirin</li>
+           <li>Participants were randomized to take a regular dose of aspirin (325 mg/day) and placebo, each for 60 days, while switching treatment after a 3-month washout period</li>
            </ul>")
     )
   ),
@@ -103,7 +103,7 @@ ui <- fluidPage(
       tabPanel(
         "PCA / PLS-DA Analysis",
         fluidRow(
-          h4("PCA plot of plasma proteins after 60 days of taking aspirin and placebo in a randomized cross-over controlled study of 44 individuals")
+          h4("PCA plot of plasma protein concentration after 60 days of taking aspirin and placebo in a randomized cross-over controlled study of 44 individuals")
         ),
         fluidRow(
           column(8, plotlyOutput("pcaPlot")),
@@ -111,13 +111,13 @@ ui <- fluidPage(
             3,
             h4("PCA Analysis"),
             HTML("<ul>
-                 <li>Unsupervised analysis does show a fair clustering for 2700 plasma proteins</li>
-                 <li>We see a better clustering for normal weight men and overweight women</li>
-                 <li>The number of observations for subcategory analysis is small, and this result should be interpreted cautiously</li>
+                 <li>Unsupervised analysis shows a fair clustering for 2700 plasma proteins</li>
+                 <li>Better clustering is observed for men with normal BMI and women with overweight BMI</li>
+                 <li>The number of observations for subcategory analysis is small so this result should be interpreted cautiously</li>
                  </ul>"))
         ),
         fluidRow(
-          h4("PLS-DA plot of plasma proteins after 60 days of taking aspirin and placebo in a randomized cross-over controlled study of 44 individuals")
+          h4("PLS-DA plot of plasma protein concentration after 60 days of taking aspirin and placebo in a randomized cross-over controlled study of 44 individuals")
         ),
         fluidRow(
           column(8, plotlyOutput("plsdaPlot")),
@@ -125,8 +125,8 @@ ui <- fluidPage(
             3,
             h4("PLS-DA Analysis"),
             HTML("<ul>
-                 <li>Supervised analysis does show a fair separation for 2700 plasma proteins plasma proteins after aspirin compared to placebo</li>
-                 <li>The separation is more prominent for normal weight men, overweight women, and overweight men</li>
+                 <li>Supervised analysis shows a fair separation for 2700 plasma proteins after taking aspirin compared to placebo</li>
+                 <li>The separation is more prominent for men with normal BMI, women with overweight BMI, and men with overweight BMI</li>
                  <li>The number of observations for subcategory analysis is small, and this result should be interpreted cautiously</li>
                  </ul>"))
         )
@@ -163,12 +163,12 @@ server <- function(input, output, session) {
          labels = TRUE,
          xlab = "Squared Difference in Plasma Protein Concentration",
          breaks = seq(0, 3.3, by = 0.05),
-         main="Histogram of change in Plasma Protein Concentrations after taking Aspirin vs Placebo")
+         main="Histogram of change in concentration for each plasma protein after taking aspirin vs. placebo")
     abline(v = quantile(delta()$DeltaSquared, input$deltaPercentile / 100), col = "red", lwd = 2)
   })
   
   output$plotsTitle <- renderUI({
-    h2(paste("List of Proteins with change above ", input$deltaPercentile, "-th percentile", sep = ""))
+    h2(paste("List of proteins with concentration change above ", input$deltaPercentile, "-th percentile", sep = ""))
   })
   
   output$proteinPlots <- renderUI({
