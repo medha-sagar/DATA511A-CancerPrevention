@@ -22,14 +22,15 @@ create_PCA <- function(gender, bmi) {
   merged_data$Info <- paste("AGE : ", merged_data$AGE, " GENDER : ", merged_data$GENDER, " BMI : ", merged_data$BMI)
   col <- c("#4A274F", "#CCF381")
   
-  levels(merged_data$TREATMENT)[levels(merged_data$TREATMENT)=='B'] <- "Placebo"
   levels(merged_data$TREATMENT)[levels(merged_data$TREATMENT)=='A'] <- "Aspirin"
+  levels(merged_data$TREATMENT)[levels(merged_data$TREATMENT)=='B'] <- "Placebo"
+  treatment <- factor(merged_data$TREATMENT, levels=rev(levels(merged_data$TREATMENT)))
   xlabel = paste("PC",1, "(", round(100*df_var$x[1],1), "%)");
   ylabel = paste("PC",2, "(", round(100*df_var$x[2],1), "%)");
   zlabel = paste("PC",3, "(", round(100*df_var$x[3],1), "%)");
   
   p <- plotly::plot_ly(x = merged_data$PC1, y = merged_data$PC2, z = merged_data$PC3, text = merged_data$Info,
-                       color = merged_data$TREATMENT, colors = col,hovertemplate = paste('C1 Score: %{x:.2f}\nC2 Score: %{y:.2f}\nC3 Score: %{z:.2f}\n%{text}'))
+                       color = treatment, colors = col,hovertemplate = paste('C1 Score: %{x:.2f}\nC2 Score: %{y:.2f}\nC3 Score: %{z:.2f}\n%{text}'))
   
   p <- plotly::add_markers(p, sizes = 5)
   p <- plotly::layout(p, scene = list(xaxis = list(title = xlabel),
@@ -63,7 +64,7 @@ create_PLSDA <- function(gender, bmi) {
   ylabel <- paste("Component", 2, "(", round(100*df_var$x[2]/df_var$x[9],1), "%)");
   zlabel <- paste("Component", 3, "(", round(100*df_var$x[3]/df_var$x[9],1), "%)");
   p <- plotly::plot_ly(x = df_x$Comp.1, y = df_x$Comp.2, z = df_x$Comp.3,
-                       color = df_cls$x,text = df_x$Info, colors = c("#1972A4","#FF7070"),hovertemplate = paste('C1 Score: %{x:.2f}\nC2 Score: %{y:.2f}\nC3 Score: %{z:.2f}\n%{text}'))
+                       color = df_cls$x,text = df_x$Info, colors = c("#4A274F", "#CCF381"),hovertemplate = paste('C1 Score: %{x:.2f}\nC2 Score: %{y:.2f}\nC3 Score: %{z:.2f}\n%{text}'))
   p <- plotly::add_markers(p, sizes = 5)
   p <- plotly::layout(p, scene = list(xaxis = list(title = xlabel),
                                       yaxis = list(title = ylabel),
