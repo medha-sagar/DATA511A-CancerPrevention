@@ -85,8 +85,8 @@ ui <- fluidPage(
            <li>This cross-over randomized study of 44 individuals investigates how aspirin may change biological response, specifically plasma protein concentration after taking aspirin</li>
            <li>Participants were randomized to take a regular dose of aspirin (325 mg/day) and placebo, each for 60 days, while switching treatment after a 3-month washout period</li>
            </ul>")
-    )
-  ),
+      )
+      ),
   
   mainPanel(
     tabsetPanel(
@@ -116,7 +116,7 @@ ui <- fluidPage(
                  <li>Better clustering is observed for men with normal BMI and women with overweight BMI</li>
                  <li>The number of observations for subcategory analysis is small so this result should be interpreted cautiously</li>
                  </ul>"))
-        ),
+            ),
         fluidRow(
           h4("PLS-DA plot of plasma protein concentration after 60 days of taking aspirin and placebo in a randomized cross-over controlled study of 44 individuals")
         ),
@@ -130,11 +130,11 @@ ui <- fluidPage(
                  <li>The separation is more prominent for men with normal BMI, women with overweight BMI, and men with overweight BMI</li>
                  <li>The number of observations for subcategory analysis is small, and this result should be interpreted cautiously</li>
                  </ul>"))
+            )
+            )
+            )
+            )
         )
-      )
-    )
-  )
-)
 
 server <- function(input, output, session) {
   delta <- reactive({
@@ -194,12 +194,12 @@ server <- function(input, output, session) {
             prev <- end - 10
             end <- n %% 10 + prev
           }
-          df <- delta()[order(delta()$DeltaSquared, decreasing = TRUE),]
+          df <- delta()[order(abs(delta()$Delta), decreasing = TRUE),]
           df <- df[start:end,]
           par(mai=c(1,5,1,1))
           barplot(
-            df[order(df$DeltaSquared, decreasing = FALSE),]$Delta,
-            names.arg = df[order(df$DeltaSquared, decreasing = FALSE),]$Protein,
+            df[order(abs(df$Delta), decreasing = FALSE),]$Delta,
+            names.arg = df[order(abs(df$Delta), decreasing = FALSE),]$Protein,
             xlim = c(-0.5, 0.5),
             horiz=TRUE,
             las=1)
